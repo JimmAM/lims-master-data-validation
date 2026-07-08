@@ -1,9 +1,3 @@
--- =====================================================================
--- LIMS SCHEMA & QUALITY CONTROL AUDIT QUERIES
--- Purpose: Simulating Master Data structures and OOS monitoring.
--- =====================================================================
-
--- 1. Create Master Data Specifications Table
 CREATE TABLE master_data_specs (
     spec_id VARCHAR(50) PRIMARY KEY,
     product_name VARCHAR(100) NOT NULL,
@@ -13,7 +7,6 @@ CREATE TABLE master_data_specs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. Create Sample Test Results Table (Transactional Data)
 CREATE TABLE sample_results (
     sample_id VARCHAR(50) PRIMARY KEY,
     spec_id VARCHAR(50),
@@ -23,22 +16,16 @@ CREATE TABLE sample_results (
     FOREIGN KEY (spec_id) REFERENCES master_data_specs(spec_id)
 );
 
--- 3. Insert Dummy Master Data (GxP Compliant structures)
 INSERT INTO master_data_specs (spec_id, product_name, min_limit, max_limit, unit) VALUES
 ('SPEC-ACET-99', 'Acetaminophen 99%', 98.00, 102.00, '%'),
 ('SPEC-IBU-400', 'Ibuprofen 400mg', 380.00, 420.00, 'mg');
 
 INSERT INTO sample_results (sample_id, spec_id, measured_value, analyst_name) VALUES
 ('SMP-2026-001', 'SPEC-ACET-99', 99.50, 'John Doe'),
-('SMP-2026-002', 'SPEC-ACET-99', 97.20, 'Jane Smith'), -- OOS Sample
+('SMP-2026-002', 'SPEC-ACET-99', 97.20, 'Jane Smith'),
 ('SMP-2026-003', 'SPEC-IBU-400', 415.00, 'John Doe');
 
--- =====================================================================
--- AUDIT & COMPLIANCE QUERY: Automated OOS & Data Integrity Detection
--- =====================================================================
--- This query automatically calculates compliance status by joining 
--- analytical results with hardcoded Master Data specifications.
-
+-- OOS Audit and Compliance Query
 SELECT 
     r.sample_id,
     m.product_name,
